@@ -1,3 +1,4 @@
+
 # Vefforritun 2 2023, verkefni 1: Okkar eigin kennsluskrá
 
 ## Markmið
