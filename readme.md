@@ -1,6 +1,8 @@
 
 # Vefforritun 2 2023, verkefni 1: Okkar eigin kennsluskrá
 
+[Kynning í fyrirlestri](https://youtu.be/Mjrug2-LGfk).
+
 ## Markmið
 
 - Upprifjun og notkun á verkfærum og tólum úr vefforritun 1.
@@ -48,7 +50,7 @@ Eftir lestur skal útbúa HTML skrár sem birta gögnin. Þær skulu vera í mö
 
 Í verkefni skal skrifa test með [Jest](https://jestjs.io/) sem athugar hvort forritið virki eins og er skilgreint er að ofan.
 
-Allar skrár með kóða skulu hafa test og line coverage skal vera a.m.k. 80% í heildina. Þetta á við node.js kóða, ekki er krafa um að skrifa test fyrir kóða á framenda.
+Allar skrár með kóða skulu hafa test og line coverage skal vera a.m.k. 80% í heildina. Þetta á við node.js kóða, ekki þarf að telja með þann kóða sem keyrður er úr CLI/gegnum `build` scriptu. Ekki er krafa um að skrifa test fyrir kóða á framenda.
 
 Þar sem coverage gögn eru skrifuð í `coverage/` möppu skal hunsa þær með `.gitignore` skrá.
 
@@ -82,6 +84,10 @@ Setja skal upp a.m.k. _einfalt_ útlit á vefnum með flexbox eða grid. Takmark
 
 Forritið skal útbúa merkingarfræðilegt og aðgengilegt HTML með _sniðmátum_.
 
+### Bónusvirkni
+
+Valkvæmt er að bæta við JavaScript virkni á framenda fyrir auka 10% mat á verkefni:
+
 Inni á áfangasíðu skal vera hægt að raða töflunni eftir dálkum með því að smella á dálkinn. Þegar smella er á dálk skal raða töflunni eftir því dálki í hækkandi röð. Ef dálkurinn er þegar raðaður eftir þá skal raða í lækkandi röð. Athugið að hér þarf að útfæra JavaScript virkni í vafra, _client-side_.
 
 ### Tæki og tól
@@ -113,6 +119,9 @@ Setja skal upp vefinn með niðurstöðum á Netlify tengt við GitHub.
 - 30% – Útlit og virkni á vef
 - 10% – Tæki og tól
 - 10% – GitHub & Netlify
+- 10% *Bónus*, röðun á töflum client-side
+
+Heildarstig eru því 110% sem gilda öll í lokaeinkunn (upp að hámarki 10).
 
 ## Sett fyrir
 
@@ -131,8 +140,9 @@ Skil skulu innihalda:
 
 ---
 
-> Útgáfa 0.1
+> Útgáfa 0.2
 
 | Útgáfa | Breyting      |
 | ------ | ------------- |
 | 0.1    | Fyrsta útgáfa |
+| 0.2    | Breyta kröfum um test; breyta client-side JS virkni í „bónus“ |
