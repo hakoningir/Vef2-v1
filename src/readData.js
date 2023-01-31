@@ -71,6 +71,7 @@ export async function readcsv(file){
             link : col[5],
         };
     
+        
     });
     return output;
 }
