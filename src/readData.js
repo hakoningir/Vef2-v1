@@ -1,23 +1,25 @@
 import { readdir, readFile as fsReadFile} from 'fs/promises';
+import { copyFileSync, existsSync } from 'fs';
 import { join } from 'path';
+
 /**
- * 
- * @param { string } dir 
- * @returns `true` ef ...
+ * Athugar hvort mappa sé til
+ * @param { string } dir slóð
+ * @returns `true` ef slóð á möppu er til
  */
 export async function dirExists(dir){
     try {
-        const info = await stat(dir);
-        return info.isDirectory();
+        const info = existsSync(dir);
+        return info;
     } catch(e) {
         return false;
     }
 }
 
 /**
- * vantar 
- * @param { string } dir 
- * @returns { string[] }
+ * Les csv skrár inn í möppu.
+ * @param { string } dir Fær slóð á möppu sem inniheldur csv skrár
+ * @returns { string[] } Skilar upplýsingum úr csv skrám
  */
 export async function readFilesFromDir(dir){
     let files = [];
@@ -29,12 +31,16 @@ export async function readFilesFromDir(dir){
 
     const mapped = files.map(async (file) => {
         const path = join(dir, file);
-        const info = await stat(path);
-
-        if (info.isDirectory()) {
+        const info = existsSync(path);
+        var type = file.split(".");
+        if (type[1] != "csv") {
             return null;
         }
-        return path;
+        if (!info) {
+            return null;
+        }
+        const content = readFile(path)
+        return content;
     });
     const resolved = await Promise.all(mapped);
 
@@ -42,24 +48,28 @@ export async function readFilesFromDir(dir){
 }
 
 /**
- * vantar lýsingu
- * @param { string } file 
- * @param { object } param1 
- * @returns { Promise<string | null> }
+ * Les innihald csv skrár
+ * @param { string } path slóð á skrá
+ * @param { object } encoding breytir stöfum sem að csv skrá skilur ekki 
+ * @returns { Promise<string | null> } Skilar innihaldi skráar eða null ef ekkert
  */
-export async function readFile(file, {encoding = 'utf-8'} = {}){
+export async function readFile(path, {encoding = 'binary'} = {}){
     try {
-        const content = await fsReadFile(file);
+        const content = await fsReadFile(path);
         return content.toString(encoding);
     } catch (e) {
         return null;
     }
 }
 
-export async function readcsv(file){
-    const data = await readFile(file, {encoding : 'binary'})
-    let output = data.split("\n").map((row) => row.split(";"));
-    const header = output.shift();
+
+/**
+ * Les innihald csv skrár og skiptir því upp
+ * @param { String } data skrá
+ * @returns Skilar möppuðum upplýsingum í nokra dálka.
+ */
+export function readcsv(data){
+    let output = data.split("\n").map(all => all.split(";"));
 
     output = output.map((col) => {
         return {
@@ -70,12 +80,10 @@ export async function readcsv(file){
             namsstig : col[4],
             link : col[5],
         };
-    
-        
     });
     return output;
 }
-// array af csv skrám með objectum, leita af þeim
-let temp = await fsReadFile("../data/index.json");
-const data = await JSON.parse(temp);
-console.log(data)
+
+const rf = await readFilesFromDir("../data")
+const rc = readcsv(rf[0])
+console.log(rc);

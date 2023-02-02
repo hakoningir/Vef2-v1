@@ -1,44 +1,49 @@
-import { dirExists, readcsv, readFilesFromDir } from "./readData.js";
-import { stats } from "./make.js";
+import { dirExists, readcsv, readFilesFromDir, readFile } from "./readData.js";
 import { mkdir } from 'fs/promises';
-import { writeFile } from "fs";
+import { join } from "path";
+import { readFile as fsReadFile , writeFile } from "fs";
 
-const DATA_DIR = './data';
-const OUTPUT_DIR = './dist';
+
+const OUTPUT_DIR = '../dist';
+const DATA_DIR = '../data';
+
+async function parseCsv(file){
+    const rows = file.split("\n");
+    rows.forEach(row => {
+        row.split(";");
+    });
+}
 
 async function main (){
     if(!(await dirExists(OUTPUT_DIR))){
         await mkdir(OUTPUT_DIR);
     }
-
-    const datafiles = await readFilesFromDir(DATA_DIR);
+    
     const results = [];
+    const datafiles = await readFilesFromDir(DATA_DIR);
+    const files = await readFile(join(DATA_DIR, "index.json"));
 
-    for(const file of datafiles){
-        const content = await readFile(file);
-        
+    const parsedFiles = await JSON.parse(files);
+    for(const item of parsedFiles){
+        const file = await readFile(join(DATA_DIR, item.csv),  "binary");
+        const data = parseCsv(file)
+        console.log(data);
+    }   
+
+    for(const file of datafiles) {
+        const content = await readcsv(file);
         if (content) {
-            const filename = `${csv.split(".")[0]}.html`;
-            readcsv(filename);
-            const result = {
-                nr,
-                nafn,
-                einingar,
-                misseri,
-                namsstig,
-                link,
-            };
-            result.push(result);
-//        await writeFile(filepath, template, {flag: 'w+'});
+            results.push(content);
         }
+        // const filepath = join(OUTPUT_DIR, 'index.html');
+        // const template = indexTemplate(title, results);
+        // await writeFile(filepath, template, {flag : 'w+'});
     }
-    stats(results)
 
-//    const filepath = join(OUTPUT_DIR, 'index.html');
-//    const template = indexTemplate(results);
-
-//    await writeFile(filepath, template, {flag: 'w+'});
-
+    // const filepath = join(OUTPUT_DIR, 'index.html');
+    // const template = indexTemplate(results);
+    // await writeFile(filepath, template, {flag : 'w+'});
 }
 
-main()
+
+main().catch((e) => console.error(e));
