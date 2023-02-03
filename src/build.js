@@ -5,8 +5,8 @@ import { writeFile } from "fs";
 import { depTemplate, indexTemplate, csvtohtml } from "./make.js";
 
 
-const OUTPUT_DIR = '../dist';
-const DATA_DIR = '../data';
+const OUTPUT_DIR = './dist';
+const DATA_DIR = './data';
 
 
 

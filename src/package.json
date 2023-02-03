@@ -1,6 +1,6 @@
 {
     "type": "module",
     "scripts": { 
-        "dev": "browser-sync start --server --files main.js **/*.js styles.css index.html" 
+        "build": "build.js" 
     }
 }
