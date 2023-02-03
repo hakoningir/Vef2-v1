@@ -70,7 +70,8 @@ export async function getFile(path, {encoding = 'binary'} = {}){
  * @returns Skilar möppuðum upplýsingum í nokra dálka.
  */
 export function readcsv(data){
-    let output = data.split(/\r?\n/).map(all => all.split(";"));
+    let output = data.split(/\r?\n/).map(all => all.replace(/".*;.*"/, x => 
+    x.replace(";", ":")).split(";"));
 
     output = output.map((col) => {
         if(col[1]){

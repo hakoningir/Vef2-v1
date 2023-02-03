@@ -1,0 +1,13 @@
+body{
+    background-color: #afafaf;
+}
+section{
+    display: flex;
+    flex-direction: column;
+    max-width: 70rem;
+    margin: 0 auto;
+}
+section.h1{
+    width: 100%;
+    text-align: center;
+}
