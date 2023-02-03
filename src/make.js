@@ -1,12 +1,9 @@
-import { readFilesFromDir } from './readData.js';
 
 
-function fileLink(dir){
-    for (const i in dir){
-        // const link = 
-    }
+
+export function csvtohtml(link){
+    return link?.replace("csv", "html")??"";
 }
-
 
 function template(title, content){
     return `<!doctype html>
@@ -21,50 +18,69 @@ function template(title, content){
 `;
 }
 
-function rowTemplate(content) {
+function headerTemplate(content){
     return `<tr>
-                <td>${content[0]}</td>
-                <td>${content[1]}</td>
-                <td>${content[2]}</td>
-                <td>${content[3]}</td>
-                <td>${content[4]}</td>
-                <td>${content[5]}</td>
+                <th>${content.nr}</th>
+                <th>${content.nafn}</th>
+                <th>${content.einingar}</th>
+                <th>${content.misseri}</th>
+                <th>${content.namsstig}</th>
             </tr>`;
 }
 
-function firstTemplate(path) {
-    const csvLink = path; 
-    return `<ul>${csvLink}</ul>`
+function tableTemplate(content){
+    if(content && content.length != 0){
+        return `<table> 
+        ${headerTemplate(content[0])}
+        ${content.slice(1).map(course => rowTemplate(course)).join("\n\t\t\t")}
+        </table>`
+    }
+    return ""
+}
+
+function rowTemplate(content) {
+    let name = content.nafn;
+    if(content.link){
+        name = `<a href="${content.link}">${content.nafn}</a>`
+    }
+    return `<tr>
+                <td>${content.nr}</td>
+                <td>${name}</td>
+                <td>${content.einingar}</td>
+                <td>${content.misseri}</td>
+                <td>${content.namsstig}</td>
+            </tr>`;
 }
 
 export function index(results) { 
-    const content = readFilesFromDir("../data")
-    const obj = results.map(results => `
+    const obj = results.map(dep => `
     <li>
-        <a href="${rowTemplate(content)}"></a> 
+        <h2>${dep.title}</h2>
+        <p> ${dep.description}</p>
+        <a href = "${csvtohtml(dep.csv)}"> Velja </a> 
     </li>
     `).join("\n");
 
     return `
     <section>
-    <h1>Who knows</h1>
+    <h1>Kennsluskrá</h1>
     <ul>${obj}</ul>
     </section>`;
+}
+
+function courseTemplate(courses, description ,title){
+    return `<section>
+        <h1>${title}</h1>
+        <p>${description}</p>
+        ${tableTemplate(courses)}
+        </section>
+        `
 }
 
 export function indexTemplate(results){
     return template('Kennsluskrá', index(results));
 }
 
-export function statsTemplate(result) {
-    const title = result[0];
-    const items = [];
-    const item = '';
-    for(item in result){
-        items = result[item];
-    }
-    return template(title, result[item]);
+export function depTemplate(courses, description ,title) {
+    return template(title, courseTemplate(courses, description, title));
 }
-
-const stat = statsTemplate(readFilesFromDir("../data"))
-console.log(stat);

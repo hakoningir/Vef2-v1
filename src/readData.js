@@ -1,6 +1,7 @@
 import { readdir, readFile as fsReadFile} from 'fs/promises';
 import { copyFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import { URL } from 'url';
 
 /**
  * Athugar hvort mappa sé til
@@ -39,7 +40,7 @@ export async function readFilesFromDir(dir){
         if (!info) {
             return null;
         }
-        const content = readFile(path)
+        const content = getFile(path)
         return content;
     });
     const resolved = await Promise.all(mapped);
@@ -53,9 +54,9 @@ export async function readFilesFromDir(dir){
  * @param { object } encoding breytir stöfum sem að csv skrá skilur ekki 
  * @returns { Promise<string | null> } Skilar innihaldi skráar eða null ef ekkert
  */
-export async function readFile(path, {encoding = 'binary'} = {}){
+export async function getFile(path, {encoding = 'binary'} = {}){
     try {
-        const content = await fsReadFile(path);
+        const content = await fsReadFile(path, {encoding:encoding});
         return content.toString(encoding);
     } catch (e) {
         return null;
@@ -69,21 +70,48 @@ export async function readFile(path, {encoding = 'binary'} = {}){
  * @returns Skilar möppuðum upplýsingum í nokra dálka.
  */
 export function readcsv(data){
-    let output = data.split("\n").map(all => all.split(";"));
+    let output = data.split(/\r?\n/).map(all => all.split(";"));
 
     output = output.map((col) => {
-        return {
-            nr : col[0],
-            nafn : col[1],
-            einingar : col[2],
-            misseri: col[3],
-            namsstig : col[4],
-            link : col[5],
-        };
+        if(col[1]){
+            return {
+                nr : col[0],
+                nafn : col[1],
+                einingar : validateEiningar(col[2]),
+                misseri: validateMisseri(col[3]),
+                namsstig : validateNamsstig(col[4]),
+                link : validateLink(col[5])
+            };
+        }
+        return null;
     });
-    return output;
+    return output.filter(x => !!x);
 }
 
-const rf = await readFilesFromDir("../data")
-const rc = readcsv(rf[0])
-console.log(rc);
+function validateNamsstig(namsstig){
+    return namsstig ?? ""
+}
+
+function validateEiningar(einingar){
+    return einingar?.includes(".") ? "" : einingar;
+}
+
+function validateLink(link){
+    try {
+        const url = new URL(link);
+        return link;
+    } catch{
+        return ""
+    }
+}
+
+function validateMisseri(misseri){
+    switch (misseri) {
+        case "Vor":
+        case "Haust":
+        case "Sumar":
+            return misseri
+        default:
+            return ""
+    }
+}
